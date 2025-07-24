@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>北京地铁站点拥堵状况综合评价</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    body{margin:0;font-family:"Microsoft YaHei";color:#333;background:#f7f7f7}
+    header{background:#0052d9;color:#fff;padding:25px 0;text-align:center;font-size:24px}
+    .intro{max-width:900px;margin:20px auto;padding:0 15px;line-height:1.8;font-size:15px}
+    .cards{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;padding:20px}
+    .card{flex:1 1 280px;cursor:pointer;background:#fff;border-radius:8px;
+          box-shadow:0 2px 8px rgba(0,0,0,.1);text-align:center;padding:20px;transition:.3s}
+    .card:hover{transform:translateY(-5px)}
+    .card img{width:100%;height:160px;object-fit:cover;border-radius:4px;margin-bottom:10px}
+    .card h3{margin:10px 0 5px}
+    .card p{font-size:14px;color:#666}
+    #map{height:400px}
+  </style>
+</head>
+<body>
+
+<header>北京地铁站点拥堵状况综合评价</header>
+
+<!-- 项目背景与目的 -->
+<section class="intro">
+  <strong>项目背景与目的：</strong>
+  北京地铁作为全球最繁忙的轨道交通系统，拥堵问题日益突出。本研究融合人文-自然地理要素，
+  构建熵权-TOPSIS 综合评价体系，并采用 MLP 神经网络进行时空预测，为“十四五”规划提供决策支持。
+</section>
+
+<!-- 三栏卡片 -->
+<div class="cards">
+  <!-- 近十周客流趋势 -->
+  <div class="card" onclick="location.href='/trend'">
+    <img src="/static/img/congestion_trend.png" alt="客流趋势">
+    <h3>近十周北京地铁客流趋势</h3>
+    <p>点击查看详细折线/交互图</p>
+  </div>
+
+  <!-- 全网拥堵指数 -->
+  <div class="card" onclick="location.href='/congestion'">
+    <img src="/static/img/station_levels.png" alt="拥堵指数">
+    <h3>北京地铁全网拥堵指数</h3>
+    <p>历史+未来7天 MLP 预测</p>
+  </div>
+
+  <!-- 其他数据分析 -->
+  <div class="card" onclick="location.href='/analysis'">
+    <img src="/static/img/boxplot.png" alt="其他分析">
+    <h3>其他数据分析</h3>
+    <p>箱线图 / 移动平均 / 峰值识别</p>
+  </div>
+</div>
+
+<!-- 地图保持原样 -->
+<!-- 地图 -->
+<div id="map" style="height:400px;position:relative;z-index:1;"></div>
+
+<!-- 研发团队 -->
+<section style="text-align:center;margin:40px 0;position:relative;z-index:2;">
+  <h2>研发团队</h2>
+  <a href="/team" style="display:inline-block;padding:10px 30px;background:#0052d9;color:#fff;border-radius:4px;text-decoration:none">点击查看</a>
+</section></div>
+
+<!-- 首页地图：使用全部站点坐标 -->
+<!-- 恢复：使用拥堵分级站点 -->
+<script>
+fetch('/api/stations')
+  .then(r => r.json())
+  .then(geo => {
+    const map = L.map('map').setView([39.9, 116.4], 10);
+    L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+      subdomains: '1234'
+    }).addTo(map);
+
+    const colors = {'畅通': '#009966', '轻度': '#ffde33', '中度': '#ff9933', '严重': '#cc0033'};
+    L.geoJSON(geo, {
+      pointToLayer: (_, latlng) => {
+        const p = _.properties;
+        return L.circleMarker(latlng, {
+          radius: 7,
+          color: '#fff',
+          fillColor: colors[p.level],
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        }).bindTooltip(`${p.车站名称}<br>${p.level}`);
+      }
+    }).addTo(map);
+  });
+</script>
+</body>
+</html>

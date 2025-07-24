@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>研发团队</title>
+  <style>
+    body{margin:0;font-family:Microsoft YaHei;background:#f7f7f7}
+    .team{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;padding:40px 20px}
+    .member{width:180px;text-align:center}
+    .member img{width:150px;height:150px;border-radius:50%;object-fit:cover;border:3px solid #0052d9}
+    .member p{margin-top:10px;font-size:16px;font-weight:bold}
+    h1{text-align:center;margin:30px 0}
+  </style>
+</head>
+<body>
+  <h1>研发团队</h1>
+  <div class="team">
+    {% for p in people %}
+    <div class="member">
+      <img src="{{ url_for('static', filename='img/team/' + p.img) }}" alt="{{ p.name }}">
+      <p>{{ p.name }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <p style="text-align:center"><a href="/" style="color:#0052d9">返回首页</a></p>
+</body>
+</html>

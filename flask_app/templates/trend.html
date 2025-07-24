@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>近十周北京地铁客流趋势</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>body{margin:20px;font-family:Microsoft YaHei}</style>
+</head>
+<body>
+  <h2>近十周北京地铁客流趋势</h2>
+  <div id="trendChart" style="height:400px"></div>
+  <p><a href="/">返回首页</a></p>
+  <script>
+  fetch('/api/trend').then(r=>r.json()).then(d=>{
+    const chart=echarts.init(document.getElementById('trendChart'));
+    const dates=d.hist.map(e=>e.日期).concat(d.pred.map(e=>e.date));
+    const h=d.hist.map(e=>e.拥堵指数);
+    const p=[...Array(h.length-1).fill(null), h.slice(-1)[0], ...d.pred.map(e=>e.mlp_pred)];
+    chart.setOption({
+      tooltip:{trigger:'axis'},
+      xAxis:{type:'category',data:dates},
+      yAxis:{type:'value',name:'客流(万人次)'},
+      series:[{type:'line',data:h,name:'历史'},{type:'line',data:p,name:'预测',lineStyle:{type:'dashed'}}]
+    });
+  });
+  </script>
+</body>
+</html>

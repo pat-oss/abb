@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>北京地铁全网拥堵指数</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>body{margin:0;font-family:Microsoft YaHei}</style>
+</head>
+<body>
+  <h2 style="text-align:center;margin:20px 0">北京地铁全网拥堵指数（历史 + 未来 7 天 MLP 预测）</h2>
+  <div id="main" style="width:95%;height:450px;margin:auto"></div>
+  <p style="text-align:center"><a href="/">返回首页</a></p>
+
+  <script>
+  fetch('/api/trend')
+    .then(r=>r.json())
+    .then(d=>{
+      const chart = echarts.init(document.getElementById('main'));
+      const dates = d.hist.map(e=>e.日期).concat(d.pred.map(e=>e.date));
+      const hist = d.hist.map(e=>e.拥堵指数);
+      const pred = [...Array(hist.length-1).fill(null), hist.slice(-1)[0], ...d.pred.map(e=>e.mlp_pred)];
+      chart.setOption({
+        tooltip:{trigger:'axis'},
+        legend:{data:['历史','预测'],top:30},
+        grid:{left:40,right:20,bottom:40,top:70},
+        xAxis:{type:'category',data:dates},
+        yAxis:{type:'value',name:'拥堵指数'},
+        series:[
+          {name:'历史',type:'line',data:hist,smooth:true},
+          {name:'预测',type:'line',data:pred,lineStyle:{type:'dashed'},smooth:true}
+        ]
+      });
+    });
+  </script>
+</body>
+</html>
