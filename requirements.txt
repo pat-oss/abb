@@ -24,7 +24,7 @@ et_xmlfile==2.0.0
 fastjsonschema==2.21.1
 filelock==3.18.0
 fiona==1.10.1
-Flask==3.1.1
+Flask
 Flask-SQLAlchemy==3.1.1
 folium==0.20.0
 fonttools==4.55.5
@@ -58,11 +58,11 @@ networkx==3.4.2
 neuralprophet==0.8.0
 nltk==3.9.1
 numdifftools==0.9.41
-numpy==1.26.4
+numpy
 opencv-python==4.11.0.86
 openpyxl==3.1.5
 packaging==24.2
-pandas==2.3.1
+pandas
 patsy==1.0.1
 pillow==11.1.0
 platformdirs==4.3.8
