@@ -61,3 +61,30 @@ def team():
         {'name': '赵俊全', 'img': 'zhao.jpg'}
     ]
     return render_template('team.html', people=people)
+app = Flask(__name__)
+from flask import Flask, send_from_directory, jsonify
+import os
+
+app = Flask(__name__)
+
+# 根目录静态文件
+@app.route('/')
+def index():
+    return send_from_directory('templates', 'index.html')
+
+# 静态资源统一路由：/static/...
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
+
+# 示例 API：返回 GeoJSON（按你实际路径改）
+@app.route('/api/stations')
+def api_stations():
+    path = os.path.join('static', 'data', 'stations.geojson')
+    with open(path, encoding='utf-8') as f:
+        return jsonify(f.read())
+
+# 让 Flask 在 Render 的 10000 端口上监听
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
