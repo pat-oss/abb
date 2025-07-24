@@ -88,3 +88,15 @@ def api_stations():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
+# 放在文件最下面
+@app.route('/trend')
+def trend():
+    return '<h2>近十周北京地铁客流趋势</h2><img src="/static/img/congestion_trend.png" width="100%">'
+
+@app.route('/congestion')
+def congestion():
+    return '<h2>北京地铁全网拥堵指数</h2><img src="/static/img/station_levels.png" width="100%">'
+
+@app.route('/analysis')
+def analysis():
+    return '<h2>其他数据分析</h2><img src="/static/img/boxplot.png" width="100%">'
